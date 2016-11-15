@@ -8,12 +8,18 @@ int main(int argc, char** argv) {
   // Start the node resource managers (communication, time, etc)
   ros::start();
   ROS_INFO_STREAM("Dockingstation started!");
+  
+  
   Dockingstation ds;
   ADC adc;
+  
+  
   ds.setupGPIO();
   ds.setValve(1); //set Valve bool 1 or 0
   delay(200);
   ds.setValve(0);
+  
+  
   while(1) {
   adc.readAnalog(1); // read 0 = pressure transduce, 1= FSR 1, 2=FSR 2
   delay(200);
