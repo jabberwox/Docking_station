@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
   ds.setValve(0);
 // adc.readAnalog(1);
   while(1) {
-  adc.readAnalog(1); // analogRead 0 = pressure transduce, 1= FSR 1, 2=FSR 2
+  adc.readAnalog(1); // read 0 = pressure transduce, 1= FSR 1, 2=FSR 2
   delay(200);
 }
   // Process ROS callbacks until receiving a SIGINT (ctrl-c)
