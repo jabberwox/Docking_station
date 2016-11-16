@@ -56,7 +56,7 @@ int ADS1015Addr = 0x48;  /* device address */
 #define CONTINUOUS  0  /* Continuous Convertion */
  
 char reg;
-int value;
+float value;
 int sta;
 int cfg;
 int uslptm=1000; /* delay (us) for conversion */
@@ -70,55 +70,7 @@ int i;
 double volts, vfs;
 int ADScale[4] = {FS4, FS6, FS6, FS1};
  
- 
-//int main(int argc, char * argv[]) {
-//      int i;
-//      double V0;
-//      double Vs;
-//      double pressure;
- 
-//      printf("%s: Run \"gpio load i2c\" before using. \n", argv[0]);
 
-//      printf("fd: %d \n",fd);
-
- 
-//      /* read register defaults */
-//      cfg = wiringPiI2CReadReg16(fd,ADCONFIG);
-//      printf("ADS1015 Config default[ox8583]: 0x%04x  \n",cfg);
-//      value = wiringPiI2CReadReg16(fd,ADLOW);
-//      value = swapbytes(value);
-//      printf("ADS1015 CLow default[0x8000]: 0x%04x  \n",value);
-//      value = wiringPiI2CReadReg16(fd,ADHIGH);
-//      value = swapbytes(value);
-//      printf("ADS1015 CHigh default[0x7fff]: 0x%04x  \n",value);
- 
-
-//      value = wiringPiI2CReadReg16(fd,ADCONVERT);
-//      value = swapbytes(value);
-//      printf("ADS1015 Convert default: 0x%04x  \n",value);
- 
-//      /* Try a Reading: A3 */
-//      cfg = 0x8304; /* default */
-//      cfg = cfg & 0xfff1;
- 
-//      cfg = cfg | 0x0002; /* 4.096 fs */
-//      vfs= 4.096;
- 
-//      cfg = cfg & 0xff1f;
-//      cfg = cfg | 0x0070; /* SingleEnded A3 */
-//      printf(" Config: 0x%04x \n",cfg);
-//      sta = wiringPiI2CWriteReg16(fd,ADCONFIG,cfg);
-//      printf("ADS1015 Config status: 0x%04x  \n",sta);
- 
-//      usleep(uslptm);
-//      value = wiringPiI2CReadReg16(fd,ADCONVERT);
-//      value = swapbytes(value);
-//      printf("ADS1015 Convert: 0x%04x  %f V \n",value, (vfs*value)/0x010000);
- 
-//      cfg = wiringPiI2CReadReg16(fd,ADCONFIG);
-//      printf("ADS1015 Config: 0x%04x  \n",cfg);
- 
-//      /* sweep channels */
 
 int ADC::readAnalog(int a){
 	
@@ -140,36 +92,29 @@ int ADC::readAnalog(int a){
 //  return(value);
 }
 
+ float ADC::readPressure(){
+	
+  fd = wiringPiI2CSetup(ADS1015Addr);
+	if (fd<0) {
+      printf("i2c error: fd<0  fd=%d  ... abend. ",fd);
+      return 1;
+	} 
+  cfg = 0x8300;
+  cfg = ConfigAD(cfg,MODESINGLE,PRESSURE);
+  cfg = ConfigPGA(cfg,ADScale[PRESSURE]);
+  sta = wiringPiI2CWriteReg16(fd,ADCONFIG,cfg);
+  usleep(uslptm);
+  value = wiringPiI2CReadReg16(fd,ADCONVERT);
+  value = swapbytes(value);
 
-      //while(TRUE){
-      //for (i=1;i<2;i++) {
-            //cfg = 0x8300;
-            //cfg = ConfigAD(cfg,MODESINGLE,i);
-            //printf("cfg: 0x%04x  ",cfg);
-            //cfg = ConfigPGA(cfg,ADScale[i]);
-            //printf("cfg: 0x%04x  ",cfg);
-            //printf("VFS: %f  ",vfs);
-            //sta = wiringPiI2CWriteReg16(fd,ADCONFIG,cfg);
-            //usleep(uslptm);
-            //value = wiringPiI2CReadReg16(fd,ADCONVERT);
-            //value = swapbytes(value);
-            //printf("ADS1015 Chan A%d: 0x%04x  %f V \n",i,value, (vfs*value)/0x8000);
-           
-       //delay(100);
-       //}
-       //}
-//      Vs=4.90;
-//      /* Vs=5.0; /**/
-//      V0=0.9*Vs;
-//      pressure = (vfs*value)/0x8000;
-//      /* pressure = pressure - (0.05*Vs); */
-//      pressure = pressure - 0.26;
-//      pressure = pressure * 1.01*15*68.95/(0.9*Vs);
-      /* pressure = (1013.25/14.70) * (15/(0.8*V0))* pressure; */
-//      printf("pressure: %.2f mbarr \n",pressure);
-//      return 0;
-//}
- 
+  value = (vfs*value)/0x8000; //convert to voltage
+  value =  value * 2.0/2.4  - 0.5; // this is the output in bar (or 100 kPa) relative to ambient pressure (for 150 Ohm)
+//  float f = 0.0035;
+//  std::cout  << value << " bar" << std::endl;
+//  printf("ADS1015 Chan %f bar \n", value);
+//  printf("Pressure: %f bar \n", value);
+  return(value);
+}
 int swapbytes(int d)
 {
       int o;
