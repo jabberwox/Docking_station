@@ -1,5 +1,5 @@
 // Quick and dirty implementation of the ADC
-// Source: https://dbsnyder471.files.wordpress.com/2013/08/adtest_c.doc
+// originated from: https://dbsnyder471.files.wordpress.com/2013/08/adtest_c.doc
 
 // ADTest.c
 //      Trying to read ADS1015

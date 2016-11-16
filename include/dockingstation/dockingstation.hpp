@@ -1,3 +1,4 @@
+
 #include <ros/ros.h>
 #include <wiringPi.h>
 #include <softPwm.h>
@@ -30,10 +31,11 @@
 //| BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |
 //+-----+-----+---------+------+---+---Pi 3---+---+------+---------+-----+-----+
 
-#define SERVOPIN 19
 #define VALVEPIN 13
+#define SERVOPIN 19
+#define INDUCTIONPIN 21
+
 //#define MANUALCONTROLPIN
-//#define 
 //#define BUTTONONE
 //#define BUTTONTWO
 //#define ACTUATORPIN 
@@ -44,4 +46,5 @@ class Dockingstation {
 	void setupGPIO();
 	void setValve(bool s);
 	void setServo(int pwm);
+	bool senseAnymal();
 };
