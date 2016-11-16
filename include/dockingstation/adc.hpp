@@ -7,6 +7,7 @@
 
 #define PRESSURE 0 //Pressure Sensor connected to Analog In 0
 
+
 class ADC {
 	
 	public:

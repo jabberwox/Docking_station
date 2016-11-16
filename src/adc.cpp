@@ -1,4 +1,5 @@
-// Ugly implementation of the ADC
+// Quick and dirty implementation of the ADC
+// Source: https://dbsnyder471.files.wordpress.com/2013/08/adtest_c.doc
 
 // ADTest.c
 //      Trying to read ADS1015
@@ -92,7 +93,7 @@ int ADC::readAnalog(int a){
 //  return(value);
 }
 
- float ADC::readPressure(){
+float ADC::readPressure(){
 	
   fd = wiringPiI2CSetup(ADS1015Addr);
 	if (fd<0) {
