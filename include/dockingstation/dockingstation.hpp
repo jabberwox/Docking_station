@@ -34,6 +34,7 @@
 #define VALVEPIN 13
 #define SERVOPIN 19
 #define INDUCTIONPIN 21
+#define MODEPIN 20
 
 //#define MANUALCONTROLPIN
 //#define BUTTONONE
@@ -43,8 +44,9 @@
 class Dockingstation {
 
 	public:
-	void setupGPIO();
-	void setValve(bool s);
-	void setServo(int pwm);
-	bool senseAnymal();
+	void setupGPIO(); //Initialising GPIO pins
+	void setValve(bool s); //Sets the electromechanical valve (Festo CP18-M1H-3GL-QS-10). Send "true" for open.
+	void setServo(int pwm); //Sets the PWM signal for the servo motor
+	bool senseAnymal(); //Reads the Induction Sensor (XS130B3PAL2). Returns "true" for metal detection.
+	bool senseManualOperationMode(); //Reads the value from the autonomous/manual operation switch. Returns "true" for manual mode.
 };

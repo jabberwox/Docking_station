@@ -17,6 +17,10 @@ void Dockingstation::setServo(int pwm) {
 bool Dockingstation::senseAnymal()  {
   return digitalRead(INDUCTIONPIN);
 }
+
+bool Dockingstation::senseManualOperationMode()  {
+  return digitalRead(MODEPIN); //returns the value of the manual/autonomous switch for charging
+}
 //void Dockingstation::setActuator(int pwm) {
 //	digitalWrite(ACTUATORPIN,LOW);
 //	softPwmCreate(ACTUATORPIN,0,200);
