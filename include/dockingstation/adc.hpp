@@ -11,7 +11,6 @@
 class ADC {
 	
 	public:
-	int readAnalog(int a); //use 1-4 for Analog inputs
+	float readAnalog(int a); //use 1-4 for Analog inputs
 	float readPressure();
-	
 };

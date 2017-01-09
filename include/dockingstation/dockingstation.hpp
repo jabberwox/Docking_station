@@ -36,10 +36,11 @@
 #define SERVOPIN 19
 #define INDUCTIONPIN 21
 #define MODEPIN 20
-#define YELLOWLIGHTPIN 12
-#define REDLIGHTPIN 16
+#define YELLOWLIGHTPIN 8
+#define GREENLIGHTPIN 7
 #define BLINKFREQUENCY 20 //in HZ
-
+#define MOTORIN1PIN 6
+#define MOTORIN2PIN 5
 //#define MANUALCONTROLPIN
 //#define BUTTONONE
 //#define BUTTONTWO
@@ -54,5 +55,6 @@ class Dockingstation {
 	bool senseAnymal(); //Reads the Induction Sensor (XS130B3PAL2). Returns "true" for metal detection.
 	bool senseManualOperationMode(); //Reads the value from the autonomous/manual operation switch. Returns "true" for manual mode.
 	void setYellowLight(int state); //Statemachine for the yellow light 0: yellow off, 1: yellow on, 2: yellow blink
-	void setRedLight(int state); //Statemachine for the red light 0: red off, 1: red on, 2: red blink
+	void setGreenLight(int state); //Statemachine for the red light 0: red off, 1: red on, 2: red blink
+	void moveActuator(int mode); //Moves the actuator to a defined state. Mode 0: stop, 1: forward, 2: backward
 };

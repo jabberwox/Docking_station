@@ -73,7 +73,7 @@ int ADScale[4] = {FS4, FS6, FS6, FS1};
  
 
 
-int ADC::readAnalog(int a){
+float ADC::readAnalog(int a){
 	
   fd = wiringPiI2CSetup(ADS1015Addr);
 	if (fd<0) {
@@ -88,9 +88,10 @@ int ADC::readAnalog(int a){
   usleep(uslptm);
   value = wiringPiI2CReadReg16(fd,ADCONVERT);
   value = swapbytes(value);
-  printf("ADS1015 Chan A%d: 0x%04x  %f V \n",i,value, (vfs*value)/0x8000);
+  value = (vfs*value)/0x8000;
+//  printf("ADS1015 Chan A%d: 0x%04x  %f V \n",i,value, (vfs*value)/0x8000);
 //  std::cout << value << std::endl;
-//  return(value);
+  return(value);
 }
 
 float ADC::readPressure(){
