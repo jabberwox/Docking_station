@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
 	Dockingstation ds;
 	ADC adc;
 	ds.setupGPIO();
+	ds.initializeServo();
 	
 
 //	while (bool test = true) {
@@ -28,6 +29,7 @@ int main(int argc, char** argv) {
 //	}
 	
 	while (ros::ok()) {
+					
 
 		while(ds.senseAnymal() == TRUE) {
 			//ROS_INFO_STREAM("Anymal sensed");
@@ -35,12 +37,17 @@ int main(int argc, char** argv) {
 				
 				case 1: //Autonomy mode
 					ds.setYellowLight(1); //light up yellow lamp
+					ds.setServo(180); //190 is minimum 180 is maximum out, the rest is in the middle
+					//ds.setServo(190); //200 for fully open
 					//ds.openLatch()
 					//ds.moveActuator()
 					//if (ds.confirmContact() == TRUE) {
 					std::cout << adc.readPressure() << std::endl;
-						if(adc.readPressure() <= 0.05) { //if the pressure difference is below 0.05 bar, open the valve
-						ds.setValve(1); 
+						if(adc.readPressure() <= 0.4) { //if the pressure difference is below 0.4 bar, open the valve
+							ds.setValve(1);
+						} 
+						if(adc.readPressure() > 0.4) {
+							ds.setValve(0);
 						}
 					
 					//}

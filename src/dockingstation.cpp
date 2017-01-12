@@ -9,9 +9,12 @@ void Dockingstation::setValve(bool on) {
 	digitalWrite(VALVEPIN, on);
 }
 
-void Dockingstation::setServo(int pwm) {
+void Dockingstation::initializeServo() {
 	digitalWrite(SERVOPIN,LOW);
 	softPwmCreate(SERVOPIN,0,200);
+}	
+
+void Dockingstation::setServo(int pwm) {
 	softPwmWrite(SERVOPIN,pwm);
 }
 
