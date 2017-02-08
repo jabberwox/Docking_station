@@ -1,5 +1,7 @@
 #include "dockingstation/dockingstation.hpp"
 #include "dockingstation/adc.hpp"
+#include <iostream>
+#include <thread>
 
 void Dockingstation::setupGPIO(){
 	wiringPiSetupSys();
@@ -9,13 +11,33 @@ void Dockingstation::setValve(bool on) {
 	digitalWrite(VALVEPIN, on);
 }
 
-void Dockingstation::initializeServo() {
-	digitalWrite(SERVOPIN,LOW);
-	softPwmCreate(SERVOPIN,0,200);
+void Dockingstation::initializeActuators() {
+	digitalWrite(PLUGACTUATORPIN,LOW);
+	softPwmCreate(PLUGACTUATORPIN,0,200);
+	digitalWrite(HATCHACTUATORPIN,LOW);
+	softPwmCreate(HATCHACTUATORPIN,0,200);
 }	
 
-void Dockingstation::setServo(int pwm) {
-	softPwmWrite(SERVOPIN,pwm);
+void Dockingstation::setPlugActuator(bool plugactuator) {
+switch (plugactuator) {
+	case 0:
+	softPwmWrite(PLUGACTUATORPIN,190); //190 is minimum 180 is maximum out, the rest is in between
+	break;
+	case 1:
+	softPwmWrite(PLUGACTUATORPIN,180);
+	break;
+}
+}
+
+void Dockingstation::setHatchActuator(bool hatchactuator) {
+switch (hatchactuator) {
+	case 0:
+	softPwmWrite(HATCHACTUATORPIN,190); //190 is minimum 180 is maximum out, the rest is in between
+	break;
+	case 1:
+	softPwmWrite(HATCHACTUATORPIN,180);
+	break;
+}
 }
 
 bool Dockingstation::senseAnymal()  {
@@ -35,7 +57,11 @@ switch (state) {
 	case 1:
 		digitalWrite(YELLOWLIGHTPIN, HIGH);
 		break;
-//	case 2:
+	case 2:		
+		digitalWrite(YELLOWLIGHTPIN, HIGH);
+		delay(blinktime/2);
+		digitalWrite(YELLOWLIGHTPIN, LOW);
+		delay(blinktime/2);
 	}
 }
 
@@ -48,33 +74,33 @@ switch (state) {
 	case 1:
 		digitalWrite(GREENLIGHTPIN, HIGH);
 		break;
-//	case 2:
+	case 2:
+		digitalWrite(GREENLIGHTPIN, HIGH);
+		delay(blinktime/2);
+		digitalWrite(GREENLIGHTPIN, LOW);
+		delay(blinktime/2);
+//	}
+	}}
+
+//		if (thread_running == false) {
+//		std::thread t1(Dockingstation::setGreenLightBlinking);
+//		t1.detach();
+		//break;
+//	}
+//	}
+//}
+
+/*
+void Dockingstation::setGreenLightBlinking() {
+	int	blinktime =	1000/BLINKFREQUENCY; //frequency to milliseconds
+	thread_running = true;
+	while(true) {
+		digitalWrite(GREENLIGHTPIN, HIGH);
+		delay(blinktime/2);
+		digitalWrite(GREENLIGHTPIN, LOW);
+		delay(blinktime/2);
 	}
 }
+*/
 
-void Dockingstation::moveActuator(int mode) {
-switch (mode) {
-	case 0:
-	ROS_INFO_STREAM("case 0");
-	digitalWrite(MOTORIN1PIN, LOW);
-	digitalWrite(MOTORIN2PIN, LOW);	
-	break;
-	case 1:
-	ROS_INFO_STREAM("case 1");
-	digitalWrite(MOTORIN1PIN, LOW);
-	digitalWrite(MOTORIN2PIN, HIGH);
-	break;
-	case 2:
-	ROS_INFO_STREAM("case 2");
-	digitalWrite(MOTORIN1PIN, HIGH);
-	digitalWrite(MOTORIN2PIN, LOW);
-	break;
-}
-}
 
-			
-//void Dockingstation::setActuator(int direction) {
-//	digitalWrite(ACTUATORPIN,LOW);
-//	softPwmCreate(ACTUATORPIN,0,200);
-//	softPwmWrite(ACTUATORPIN,180);
-//}

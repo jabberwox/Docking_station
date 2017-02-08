@@ -1,4 +1,3 @@
-
 #include <ros/ros.h>
 #include <wiringPi.h>
 #include <softPwm.h>
@@ -32,30 +31,37 @@
 //| BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |
 //+-----+-----+---------+------+---+---Pi 3---+---+------+---------+-----+-----+
 
-#define VALVEPIN 13
-#define SERVOPIN 19
-#define INDUCTIONPIN 21
-#define MODEPIN 20
-#define YELLOWLIGHTPIN 8
-#define GREENLIGHTPIN 7
-#define BLINKFREQUENCY 20 //in HZ
-#define MOTORIN1PIN 6
-#define MOTORIN2PIN 5
-//#define MANUALCONTROLPIN
-//#define BUTTONONE
-//#define BUTTONTWO
-//#define ACTUATORPIN 
+#define VALVEPIN 13 //Electromechanical valve 
+#define PLUGACTUATORPIN 19 //Plug linear actuator
+#define HATCHACTUATORPIN 6 //Hatch linear actuator
+#define INDUCTIONPIN 21 //Induction sensor 
+#define MODEPIN 20 //Mode selection switch 
+#define BUTTONPIN 16 //Button
+#define YELLOWLIGHTPIN 8 //Yellow signal light
+#define GREENLIGHTPIN 7 //Yellow signal light
+#define CONNECTIONPIN 12 //Successful docking to ANYmal
+
+#define BLINKFREQUENCY 10 //in HZ
 
 class Dockingstation {
 
 	public:
 	void setupGPIO(); //Initialising GPIO pins
 	void setValve(bool s); //Sets the electromechanical valve (Festo CP18-M1H-3GL-QS-10). Send "true" for open.
-	void initializeServo();
-	void setServo(int pwm); //Sets the PWM signal for the servo motor
+	void initializeActuators();
+	void setPlugActuator(bool plugactuator); //Moves the plug actuator 
+	void setHatchActuator(bool hatchactuator); //Moves the hatch actuator (1>
 	bool senseAnymal(); //Reads the Induction Sensor (XS130B3PAL2). Returns "true" for metal detection.
 	bool senseManualOperationMode(); //Reads the value from the autonomous/manual operation switch. Returns "true" for manual mode.
 	void setYellowLight(int state); //Statemachine for the yellow light 0: yellow off, 1: yellow on, 2: yellow blink
 	void setGreenLight(int state); //Statemachine for the red light 0: red off, 1: red on, 2: red blink
-	void moveActuator(int mode); //Moves the actuator to a defined state. Mode 0: stop, 1: forward, 2: backward
+	private:
+	static void setGreenLightBlinking();
+	bool thread_running=false;
 };
+
+
+//enum state {
+//	OFF,
+//	BLINK
+//};

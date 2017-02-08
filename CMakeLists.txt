@@ -203,3 +203,5 @@ add_dependencies(dockingstation_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catki
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_definitions(-std=c++11)
