@@ -40,7 +40,6 @@
 #define YELLOWLIGHTPIN 8 //Yellow signal light
 #define GREENLIGHTPIN 7 //Yellow signal light
 #define CONNECTIONPIN 12 //Successful docking to ANYmal
-
 #define BLINKFREQUENCY 10 //in HZ
 
 class Dockingstation {

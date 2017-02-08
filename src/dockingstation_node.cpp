@@ -40,20 +40,21 @@ int main(int argc, char** argv) {
 				
 				case 1: //Autonomy mode
 					ds.setYellowLight(2); //light up yellow lamp	
-					ds.setGreenLight(2);
-					ds.setHatchActuator(1); 
-					delay(5000);
-					ds.setPlugActuator(1); 
-					delay(5000);
-					ds.setYellowLight(1); //light up yellow lamp	
-					ds.setGreenLight(1);
+		//			ds.setGreenLight(2);
+		//			ds.setHatchActuator(1); 
+		//			delay(5000);
+		//			ds.setPlugActuator(1); 
+		//			delay(5000);
+		//			ds.setYellowLight(0); //light up yellow lamp	
 					//if (ds.confirmContact() == TRUE) {
 					std::cout << adc.readPressure() << std::endl;
 						if(adc.readPressure() <= 0.4) { //if the pressure difference is below 0.4 bar, open the valve
 							ds.setValve(1);
+							ds.setGreenLight(1);
 						} 
 						if(adc.readPressure() > 0.4) {
 							ds.setValve(0);
+							ds.setGreenLight(0);
 						}
 					//break;
 					//}
