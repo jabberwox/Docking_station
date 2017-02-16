@@ -58,7 +58,6 @@ bool Dockingstation::senseAnymal()  {
 	return digitalRead(INDUCTIONPIN);
 }
 
-
 void Dockingstation::setYellowLight(int state) {
 int	blinktime =	1000/BLINKFREQUENCY; //frequency to milliseconds
 switch (state) {
@@ -69,10 +68,11 @@ switch (state) {
 		digitalWrite(YELLOWLIGHTPIN, HIGH);
 		break;
 	case 2:		
+		for (int t=0; t<10 ; t++) {
 		digitalWrite(YELLOWLIGHTPIN, HIGH);
-		delay(blinktime/2);
+		delay(500);
 		digitalWrite(YELLOWLIGHTPIN, LOW);
-		delay(blinktime/2);
+		delay(500);
 	}
 }
 
@@ -86,39 +86,18 @@ switch (state) {
 		digitalWrite(GREENLIGHTPIN, HIGH);
 		break;
 	case 2:
+		for (int t=0; t<10 ; t++) {
 		digitalWrite(GREENLIGHTPIN, HIGH);
-		delay(blinktime/2);
+		delay(500);
 		digitalWrite(GREENLIGHTPIN, LOW);
-		delay(blinktime/2);
-//	}
-	}}
-
-//		if (thread_running == false) {
-//		std::thread t1(Dockingstation::setGreenLightBlinking);
-//		t1.detach();
-		//break;
-//	}
-//	}
-//}
-
-/*
-void Dockingstation::setGreenLightBlinking() {
-	int	blinktime =	1000/BLINKFREQUENCY; //frequency to milliseconds
-	thread_running = true;
-	while(true) {
-		digitalWrite(GREENLIGHTPIN, HIGH);
-		delay(blinktime/2);
-		digitalWrite(GREENLIGHTPIN, LOW);
-		delay(blinktime/2);
+		delay(500);
+		}	
 	}
 }
-*/
-
 
 bool Dockingstation::allowFilling()  {
 	return digitalRead(MODEPIN); //returns the value of the manual/autonomous switch for charging
 }
-
 
 void Dockingstation::gasFilling() {
 	ADC ad;
@@ -135,35 +114,38 @@ void Dockingstation::gasFilling() {
 	}
 }
 
-bool Dockingstation::senseDocking() {
+bool Dockingstation::senseContact() {
 	return !digitalRead(CONTACTPIN);
 }
 
-void Dockingstation::initiateDocking() {
+bool Dockingstation::initiateDocking() {
 	this->setHatchActuator(1);
-	delay(5000);
+	this->setYellowLight(2);
 	this->setPlugActuator(1);
-	delay(5000);
+	this->setYellowLight(2);
 	
-	bool connection = senseDocking();
+	bool connection = senseContact();
 	
 	if (connection == false) {
 		for (int n=0; n < 3; n++) {
 			ROS_INFO_STREAM("Contact cannot be established, Trying again");
 			softPwmWrite(PLUGACTUATORPIN,185);
 			softPwmWrite(PLUGACTUATORPIN,180);
-				if (this->senseDocking() == true) {
+				if (this->senseContact() == true) {
 					connection = true;
 					break;
 				}
 			}
 			ROS_INFO_STREAM("Contact cannot be established, Aborting");
 			this->setHatchActuator(0);
-			delay(5000);
+			this->setYellowLight(2);
 			this->setPlugActuator(0);
-			delay(5000);
+			this->setYellowLight(2);
 		}
 
-	}
+}
 			
+void Dockingstation::monitorCurrent() {
 	
+	
+}

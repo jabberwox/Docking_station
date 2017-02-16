@@ -1,8 +1,6 @@
 #include <ros/ros.h>
 #include <wiringPi.h>
 #include <softPwm.h>
-#include <iostream>
-#include <thread>
 
 //Pin definition for GPIO, use BCM number
 //
@@ -49,27 +47,23 @@
 
 class Dockingstation {
 	public:
+	
 	Dockingstation();
 	~Dockingstation();
+	
+	bool senseAnymal(); //Reads the Induction Sensor (XS130B3PAL2). Returns "true" for metal detection.
+    bool initiateDocking();
+    void gasFilling();
+    void monitorCurrent();
+    
+	private:
 	void setupGPIO(); //Initialising GPIO pins
-	void setValve(bool s); //Sets the electromechanical valve (Festo CP18-M1H-3GL-QS-10). Send "true" for open.
 	void initializeActuators();
 	void setPlugActuator(bool plugactuator); //Moves the plug actuator 
 	void setHatchActuator(bool hatchactuator); //Moves the hatch actuator
-	bool senseAnymal(); //Reads the Induction Sensor (XS130B3PAL2). Returns "true" for metal detection.
+	bool senseContact();
 	bool allowFilling(); //Reads the value from the gas filling operation switch. Returns "true" for manual mode.
+	void setValve(bool s); //Sets the electromechanical valve (Festo CP18-M1H-3GL-QS-10). Send "true" for open.
 	void setYellowLight(int state); //Statemachine for the yellow light 0: yellow off, 1: yellow on, 2: yellow blink
 	void setGreenLight(int state); //Statemachine for the red light 0: red off, 1: red on, 2: red blink
-    void gasFilling();
-    bool senseContact();
-    void initiateDocking();
-    bool senseDocking();
-	private:
-	static void setGreenLightBlinking();
 };
-
-
-//enum state {
-//	OFF,
-//	BLINK
-//};

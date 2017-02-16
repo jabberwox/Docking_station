@@ -1,77 +1,4 @@
-// Quick and dirty implementation of the ADC
-// originated from: https://dbsnyder471.files.wordpress.com/2013/08/adtest_c.doc
-
-// ADTest.c
-//      Trying to read ADS1015
-//      I2C 0x48
-//run
-//      gpio load i2c
-//before using
- 
 #include "dockingstation/adc.hpp"
-
-int fd;  /* I2C File descriptor */
-int ADS1015Addr = 0x48;  /* device address */
- 
-/* ADS1015 Registers */
-#define ADCONFIG 1
-#define ADCONVERT 0
-#define ADLOW 2
-#define ADHIGH 3
- 
-/* ADS1015 MUX Settings */
-#define MODEDIFF 0  /* Defferential Mode */
-#define MODESINGLE 1 /* Single Ended Mode */
- 
-/* Single Ended Channels */
-#define A0 0
-#define A1 1
-#define A2 2
-#define A3 3                
- 
-/* Differential Channels */
-#define A01 0
-#define A03 1
-#define A13 2
-#define A23 3
- 
-/* Scale Settings - Programable Gain Amplifier */
-#define FS6   0  /* 6.114V Full Scale */
-#define FS4   1  /* 4.096V Full Scale */
-#define FS2   2  /* 2.048V Full Scale */
-#define FS1   3  /* 1.012V Full Scale */
-#define FS05  4  /* 0.512V Full Scale */
-#define FS025 5  /* 0.256V Full Scale */
- 
-/* Data Rate */
-#define SPS128   0  /* 128 samples/second  8ms*/
-#define SPS250   1  /* 240 samples/second  4ms*/
-#define SPS490   2  /* 490 samples/second  2.04ms*/
-#define SPS920   3  /* 920 samples/second  1.09ms*/
-#define SPS1600  4  /* 1600 samples/second  0.625ms*/
-#define SPS2400  5  /* 2400 samples/second  0.420ms*/
-#define SPS3300  6  /* 3300 samples/second  0.304ms*/
- 
-/* DOM: Device Operating Mode */
-#define SINGLESHOT 1  /* Power down Single Shot mode */
-#define CONTINUOUS  0  /* Continuous Convertion */
- 
-char reg;
-float value;
-int sta;
-int cfg;
-int uslptm=1000; /* delay (us) for conversion */
-int swapbytes(int data);
-int ConfigAD(int cfg, int mode, int chan);
-int ConfigPGA(int cfg, int mode);
-int ConfigRate(int cfg, int mode);
-int ConfigDOM(int cfg, int mode); /* CONTINUOUS or SINGLESHOT */
-int i; 
- 
-double volts, vfs;
-int ADScale[4] = {FS4, FS6, FS6, FS1};
- 
-
 
 float ADC::readAnalog(int a){
 	
@@ -96,28 +23,20 @@ float ADC::readAnalog(int a){
 
 float ADC::readPressure(){
 	
-  fd = wiringPiI2CSetup(ADS1015Addr);
-	if (fd<0) {
-      printf("i2c error: fd<0  fd=%d  ... abend. ",fd);
-      return 1;
-	} 
-  cfg = 0x8300;
-  cfg = ConfigAD(cfg,MODESINGLE,PRESSURE);
-  cfg = ConfigPGA(cfg,ADScale[PRESSURE]);
-  sta = wiringPiI2CWriteReg16(fd,ADCONFIG,cfg);
-  usleep(uslptm);
-  value = wiringPiI2CReadReg16(fd,ADCONVERT);
-  value = swapbytes(value);
-
-  value = (vfs*value)/0x8000; //convert to voltage
+  value = this->readAnalog(PRESSURE); 
   value =  value * 1/2-0.5; // this is the output in bar (or 100 kPa) relative to input pressure (for 250 Ohm)
-//  float f = 0.0035;
-//  std::cout  << value << " bar" << std::endl;
-//  printf("ADS1015 Chan %f bar \n", value);
-//  printf("Pressure: %f bar \n", value);
   return(value);
 }
-int swapbytes(int d)
+
+float ADC::readCurrent(){
+	
+  value = this->readAnalog(CURRENT); 
+// value =  value * 1/2-0.5; // insert conversion
+
+  return(value);
+}
+
+int ADC::swapbytes(int d)
 {
       int o;
  
@@ -127,7 +46,7 @@ int swapbytes(int d)
       return o;
 }
  
-int ConfigAD(int cfg, int mode, int chan)
+int ADC::ConfigAD(int cfg, int mode, int chan)
 {
       int val;
       val = cfg;
@@ -175,7 +94,7 @@ int ConfigAD(int cfg, int mode, int chan)
       return val;
 }
  
-int ConfigPGA(int cfg, int mode)
+int ADC::ConfigPGA(int cfg, int mode)
 {
       int val;
       double sf;
@@ -226,7 +145,7 @@ int ConfigPGA(int cfg, int mode)
       return val;
 }
  
-int ConfigRate(int cfg, int mode)
+int ADC::ConfigRate(int cfg, int mode)
 {
       int val;
       int clrSPS = 0x1fff;
@@ -269,7 +188,7 @@ int ConfigRate(int cfg, int mode)
  
 }
  
-int ConfigDOM(int cfg, int mode) /* CONTINUOUS or SINGLESHOT */
+int ADC::ConfigDOM(int cfg, int mode) /* CONTINUOUS or SINGLESHOT */
 {
       int val;
  
