@@ -110,7 +110,7 @@ float ADC::readPressure(){
   value = swapbytes(value);
 
   value = (vfs*value)/0x8000; //convert to voltage
-  value =  value * 1/2-0.5; // this is the output in bar (or 100 kPa) relative to ambient pressure (for 150 Ohm)
+  value =  value * 1/2-0.5; // this is the output in bar (or 100 kPa) relative to input pressure (for 250 Ohm)
 //  float f = 0.0035;
 //  std::cout  << value << " bar" << std::endl;
 //  printf("ADS1015 Chan %f bar \n", value);

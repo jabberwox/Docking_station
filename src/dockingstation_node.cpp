@@ -1,6 +1,7 @@
 #include "dockingstation/dockingstation.hpp"
 #include "dockingstation/adc.hpp"
 
+using namespace std;
 
 int main(int argc, char** argv) {
 
@@ -14,6 +15,7 @@ int main(int argc, char** argv) {
 
 	Dockingstation ds;
 	ADC adc;
+	
 	ds.setupGPIO();
 	ds.initializeActuators();
 	ds.setYellowLight(0); //power off yellow lamp
@@ -36,9 +38,8 @@ int main(int argc, char** argv) {
 
 		while(ds.senseAnymal() == TRUE) {
 //			ROS_INFO_STREAM("Anymal sensed");
-			switch (ds.senseManualOperationMode()) {
-				
-				case 1: //Autonomy mode
+			if(ds.allowFilling() == true) { //|| button pressed || overriden by external
+			//Autonomy mode
 					ds.setYellowLight(2); //light up yellow lamp	
 		//			ds.setGreenLight(2);
 		//			ds.setHatchActuator(1); 
@@ -47,24 +48,18 @@ int main(int argc, char** argv) {
 		//			delay(5000);
 		//			ds.setYellowLight(0); //light up yellow lamp	
 					//if (ds.confirmContact() == TRUE) {
-					std::cout << adc.readPressure() << std::endl;
-						if(adc.readPressure() <= 0.4) { //if the pressure difference is below 0.4 bar, open the valve
-							ds.setValve(1);
-							ds.setGreenLight(1);
-						} 
-						if(adc.readPressure() > 0.4) {
-							ds.setValve(0);
-							ds.setGreenLight(0);
-						}
+
+
+						//}
 					//break;
 					//}
 				//case 1: //Manual mode (Buttons have to be pressed to start operation or teleoperation)
 			}
 		}
 	ROS_INFO_STREAM("Anymal not sensed");
-	ds.setValve(0); 
-	ds.setYellowLight(0); //power off yellow lamp
-    ds.setGreenLight(0); 
+//	ds.setValve(0); 
+//	ds.setYellowLight(0); //power off yellow lamp
+//  ds.setGreenLight(0); 
     
     
 	}

@@ -1,6 +1,8 @@
 #include <ros/ros.h>
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <iostream>
+#include <thread>
 
 //Pin definition for GPIO, use BCM number
 //
@@ -39,24 +41,31 @@
 #define BUTTONPIN 16 //Button
 #define YELLOWLIGHTPIN 8 //Yellow signal light
 #define GREENLIGHTPIN 7 //Yellow signal light
-#define CONNECTIONPIN 12 //Successful docking to ANYmal
+#define CONTACTPIN 12 //Successful docking to ANYmal
+
 #define BLINKFREQUENCY 10 //in HZ
 
-class Dockingstation {
+#define FILLINGPRESSURE 0.2 //defines the pressure difference between transducer inlet and outlet
 
+class Dockingstation {
 	public:
+	Dockingstation();
+	~Dockingstation();
 	void setupGPIO(); //Initialising GPIO pins
 	void setValve(bool s); //Sets the electromechanical valve (Festo CP18-M1H-3GL-QS-10). Send "true" for open.
 	void initializeActuators();
 	void setPlugActuator(bool plugactuator); //Moves the plug actuator 
-	void setHatchActuator(bool hatchactuator); //Moves the hatch actuator (1>
+	void setHatchActuator(bool hatchactuator); //Moves the hatch actuator
 	bool senseAnymal(); //Reads the Induction Sensor (XS130B3PAL2). Returns "true" for metal detection.
-	bool senseManualOperationMode(); //Reads the value from the autonomous/manual operation switch. Returns "true" for manual mode.
+	bool allowFilling(); //Reads the value from the gas filling operation switch. Returns "true" for manual mode.
 	void setYellowLight(int state); //Statemachine for the yellow light 0: yellow off, 1: yellow on, 2: yellow blink
 	void setGreenLight(int state); //Statemachine for the red light 0: red off, 1: red on, 2: red blink
+    void gasFilling();
+    bool senseContact();
+    void initiateDocking();
+    bool senseDocking();
 	private:
 	static void setGreenLightBlinking();
-	bool thread_running=false;
 };
 
 
