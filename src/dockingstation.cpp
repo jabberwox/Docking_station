@@ -1,12 +1,26 @@
-#include "dockingstation/dockingstation.hpp"
-#include "dockingstation/adc.hpp"
+/*!
+ * @file	dockingstation.cpp
+ * @author	Hendrik Kolvenbach
+ * @date	February, 2017
+ */
 
-Dockingstation::Dockingstation() {
+#include "dockingstation/dockingstation.hpp"
+
+namespace dockingstation {
+
+
+Dockingstation::Dockingstation(any_node::Node::NodeHandlePtr nh) : any_node::Node(nh) {
+}
+
+Dockingstation::~Dockingstation() {
+}
+
+void Dockingstation::init() {
 	this->setupGPIO();
 	this->initializeActuators();
 }
 
-Dockingstation::~Dockingstation() {
+void Dockingstation::cleanup() {
 	ROS_INFO_STREAM("Shutting down");
 	this->setHatchActuator(0);
 	delay(5000);
@@ -15,6 +29,7 @@ Dockingstation::~Dockingstation() {
 	this->setValve(0); 
 	this->setYellowLight(0); 
     this->setGreenLight(0); 
+	
 }
 
 void Dockingstation::setupGPIO(){
@@ -75,6 +90,7 @@ switch (state) {
 		delay(500);
 	}
 }
+}
 
 void Dockingstation::setGreenLight(int state) {
 int	blinktime =	1000/BLINKFREQUENCY; //frequency to milliseconds
@@ -95,9 +111,11 @@ switch (state) {
 	}
 }
 
+
 bool Dockingstation::allowFilling()  {
 	return digitalRead(MODEPIN); //returns the value of the manual/autonomous switch for charging
 }
+
 
 void Dockingstation::gasFilling() {
 	ADC ad;
@@ -149,3 +167,20 @@ void Dockingstation::monitorCurrent() {
 	
 	
 }
+
+bool Dockingstation::update(const any_worker::WorkerEvent& event) {
+	
+	while(this->senseAnymal() == TRUE) {
+			bool docking = this->initiateDocking();
+			if (docking == true) {
+					//Do something
+			}
+		}
+	ROS_INFO_STREAM("Anymal not sensed"); 
+	
+	
+	
+}
+
+
+}// namespace Dockingstation

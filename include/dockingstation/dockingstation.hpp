@@ -1,6 +1,14 @@
-#include <ros/ros.h>
+/*!
+ * @file	dockingstation.hpp
+ * @author	Hendrik Kolvenbach
+ * @date	February, 2017
+ */
+
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <ros/ros.h>
+#include "any_node/any_node.hpp"
+#include "dockingstation/adc.hpp"
 
 //Pin definition for GPIO, use BCM number
 //
@@ -42,14 +50,20 @@
 #define CONTACTPIN 12 //Successful docking to ANYmal
 
 #define BLINKFREQUENCY 10 //in HZ
-
 #define FILLINGPRESSURE 0.2 //defines the pressure difference between transducer inlet and outlet
 
-class Dockingstation {
+namespace dockingstation {
+
+class Dockingstation : public  any_node::Node { 
 	public:
+
+	Dockingstation() = delete; // constructor needs to take a shared_ptr to a ros::Nodehandle instance.
+	Dockingstation(any_node::Node::NodeHandlePtr nh);
 	
-	Dockingstation();
-	~Dockingstation();
+	virtual ~Dockingstation();
+	virtual void init();
+	virtual void cleanup();
+	virtual bool update(const any_worker::WorkerEvent& event);
 	
 	bool senseAnymal(); //Reads the Induction Sensor (XS130B3PAL2). Returns "true" for metal detection.
     bool initiateDocking();
@@ -66,4 +80,6 @@ class Dockingstation {
 	void setValve(bool s); //Sets the electromechanical valve (Festo CP18-M1H-3GL-QS-10). Send "true" for open.
 	void setYellowLight(int state); //Statemachine for the yellow light 0: yellow off, 1: yellow on, 2: yellow blink
 	void setGreenLight(int state); //Statemachine for the red light 0: red off, 1: red on, 2: red blink
+	
 };
+}// namespace Dockingstation

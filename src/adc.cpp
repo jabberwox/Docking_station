@@ -1,4 +1,12 @@
+/*!
+ * @file	adc.cpp
+ * @author	Hendrik Kolvenbach
+ * @date	February, 2017
+ */
+
 #include "dockingstation/adc.hpp"
+
+namespace dockingstation {
 
 float ADC::readAnalog(int a){
 	
@@ -24,14 +32,14 @@ float ADC::readAnalog(int a){
 float ADC::readPressure(){
 	
   value = this->readAnalog(PRESSURE); 
-  value =  value * 1/2-0.5; // this is the output in bar (or 100 kPa) relative to input pressure (for 250 Ohm)
+  value =  value * 1.0/2.0 - 0.5; // this is the output in bar (or 100 kPa) relative to input pressure (for 250 Ohm)
   return(value);
 }
 
 float ADC::readCurrent(){
 	
   value = this->readAnalog(CURRENT); 
-// value =  value * 1/2-0.5; // insert conversion
+// value =  value * 1.0/2.0-0.5; // insert conversion
 
   return(value);
 }
@@ -191,9 +199,7 @@ int ADC::ConfigRate(int cfg, int mode)
 int ADC::ConfigDOM(int cfg, int mode) /* CONTINUOUS or SINGLESHOT */
 {
       int val;
- 
       val = cfg;
- 
       switch (mode) {
       case CONTINUOUS:
             val = val & 0xfffe;
@@ -208,4 +214,4 @@ int ADC::ConfigDOM(int cfg, int mode) /* CONTINUOUS or SINGLESHOT */
 }
  
  
- 
+}// namespace Dockingstation

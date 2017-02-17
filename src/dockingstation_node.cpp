@@ -1,33 +1,15 @@
+/*!
+ * @file	dockingstation_node.cpp
+ * @author	Hendrik Kolvenbach
+ * @date	February, 2017
+ */
+
 #include "dockingstation/dockingstation.hpp"
-#include "dockingstation/adc.hpp"
+
 
 int main(int argc, char** argv) {
-
-
-	// Announce this program to the ROS master as a "node" called "dockingstation_node"
-	ros::init(argc, argv, "dockingstation_node");
-	// Start the node resource managers (communication, time, etc)
-	ros::start();
-  
-	ROS_INFO_STREAM("Dockingstation started!");
-
-	Dockingstation ds;
-	ADC adc;
-	
-	while (ros::ok()) {
-					
-
-		while(ds.senseAnymal() == TRUE) {
-			bool docking = ds.initiateDocking();
-			if (docking == true) {
-				
-					//ds.
-			}
-		}
-	ROS_INFO_STREAM("Anymal not sensed"); 
-	}
-	
-ros::shutdown();
-return 0;
+  any_node::Nodewrap<dockingstation::Dockingstation> node(argc, argv, "dockingstation", 1);
+  node.execute(90); // 90=priority of the thread calling the update(..) function (if any)
+  // execute blocks until the node was requested to shut down (after reception of a signal (e.g. SIGINT) or after calling the any_node::Node::shutdown() function)
+  return 0;
 }
-

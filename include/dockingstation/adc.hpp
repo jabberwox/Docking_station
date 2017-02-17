@@ -1,5 +1,10 @@
-// Quick and dirty implementation of the ADC
-// originated from: https://dbsnyder471.files.wordpress.com/2013/08/adtest_c.doc
+/*!
+ * @file	adc.cpp
+ * @author	Hendrik Kolvenbach
+ * @date	February, 2017
+ * 
+ * @brief Quick and dirty implementation of the Drivers for the TI ADS1015 12-Bit I2C ADC, parts originated from K. Townsend (microBuilder.eu) 
+ */
 
 //      Trying to read ADS1015
 //      I2C 0x48
@@ -60,7 +65,8 @@
 #define SINGLESHOT 1  /* Power down Single Shot mode */
 #define CONTINUOUS  0  /* Continuous Convertion */
 
-
+namespace dockingstation {
+	
 class ADC {
 	
 	public:
@@ -85,3 +91,4 @@ class ADC {
 	double volts, vfs;
 	int ADScale[4] = {FS4, FS6, FS6, FS1};
 };
+}// namespace Dockingstation
