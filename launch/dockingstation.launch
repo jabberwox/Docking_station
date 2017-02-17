@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<launch>  
+  <node name="dockingstation_node" pkg="dockingstation" type="dockingstation_node" respawn="true" output="screen">
+	<rosparam file="$(find dockingstation)/config/dockingstation.yaml" command="load"/>
+  </node>
+  
+</launch>

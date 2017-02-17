@@ -16,6 +16,7 @@ Dockingstation::~Dockingstation() {
 }
 
 void Dockingstation::init() {
+	ROS_INFO_STREAM("Initialize dockingstation node"); 
 	this->setupGPIO();
 	this->initializeActuators();
 }
@@ -29,7 +30,6 @@ void Dockingstation::cleanup() {
 	this->setValve(0); 
 	this->setYellowLight(0); 
     this->setGreenLight(0); 
-	
 }
 
 void Dockingstation::setupGPIO(){
@@ -111,11 +111,9 @@ switch (state) {
 	}
 }
 
-
 bool Dockingstation::allowFilling()  {
 	return digitalRead(MODEPIN); //returns the value of the manual/autonomous switch for charging
 }
-
 
 void Dockingstation::gasFilling() {
 	ADC ad;
@@ -160,27 +158,23 @@ bool Dockingstation::initiateDocking() {
 			this->setPlugActuator(0);
 			this->setYellowLight(2);
 		}
-
 }
-			
+
 void Dockingstation::monitorCurrent() {
-	
-	
 }
 
 bool Dockingstation::update(const any_worker::WorkerEvent& event) {
-	
-	while(this->senseAnymal() == TRUE) {
+	ROS_INFO_STREAM("Anymal not sensed"); 
+	if(this->senseAnymal() == TRUE) {
 			bool docking = this->initiateDocking();
 			if (docking == true) {
+					ROS_INFO_STREAM("Anymal sensed");
+					this->initiateDocking();
 					//Do something
+					
 			}
 		}
-	ROS_INFO_STREAM("Anymal not sensed"); 
-	
-	
-	
+	//ROS_INFO_STREAM("Anymal not sensed"); 
 }
-
 
 }// namespace Dockingstation

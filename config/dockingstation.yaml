@@ -1,0 +1,5 @@
+# Config file for Dockingstation
+#############################
+
+time_step: 1
+standalone: true
